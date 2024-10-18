@@ -6,27 +6,31 @@ import RecipesFilter from './RecipesFilter';
 
 
 export default function RecipeSearch() {
-  const [recipes, setRecipes] = useState([]);
 
-  const fetchRecipesApi = () => {
-    fetchRecipes()
+  const [recipes, setRecipes] = useState([]);
+  const [filters, setFilters] = useState({ ingredients: '', intolerances: '', diet: '' });
+
+  const fetchRecipesApi = (filters) => {
+    fetchRecipes(filters)
       .then((data) => {
-        if (data && data.recipes) {
-          setRecipes(data.recipes);
-        } else {
-          console.error('No recipes');
-        }
+        setRecipes(data.results);
       })
       .catch((error) => console.error('Error fetching recipes:', error));
   };
 
   useEffect(() => {
-    fetchRecipesApi();
-  }, []);
+    fetchRecipesApi(filters);
+  }, [filters]); // Dependency array
+
+  // Set filters from filter component
+  const pressApplyFilters = (filters) => {
+    setFilters(filters);
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <RecipesFilter />
+      {/* Display filter component and manage filters value*/}
+      <RecipesFilter onApplyFilters={pressApplyFilters}/>
       <View />
       <ScrollView contentContainerStyle={styles.container}>
         {recipes.length > 0 ? (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, TextInput, Card } from 'react-native-paper';
 
-export default function RecipesFilter() {
+export default function RecipesFilter({onApplyFilters}) {
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [ingredients, setIngredients] = useState('');
   const [intolerances, setIntolerances] = useState('');
@@ -13,7 +13,14 @@ export default function RecipesFilter() {
   };
 
   const applyFilters = () => {
-    
+    const filters = {
+      ingredients,
+      intolerances,
+      diet,
+    };
+
+    // filters will be passed to the recipe search component
+    onApplyFilters(filters);
   }
 
   return (
@@ -48,7 +55,7 @@ export default function RecipesFilter() {
 
           {/* TextInput for recipes based on a specific diet (vegan, lactose free, gluten, free...) */}
           <TextInput
-            label="Specific diet"
+            label="Diet"
             value={diet}
             onChangeText={text => setDiet(text)}
             mode="outlined"
