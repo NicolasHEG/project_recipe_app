@@ -23,6 +23,13 @@ export default function RecipesFilter({onApplyFilters}) {
     onApplyFilters(filters);
   }
 
+  const clearFilters = () => {
+    setIngredients('');
+    setIntolerances('');
+    setDiet('');
+    onApplyFilters({});
+  }
+
   return (
     <View style={styles.container}>
       <Button mode="contained" onPress={toggleFilters}>
@@ -63,9 +70,8 @@ export default function RecipesFilter({onApplyFilters}) {
             placeholder="e.g., vegan, lactose free"
           />
           
-          <Button mode="contained" onPress={applyFilters}>
-            Apply Filters
-          </Button>
+          <Button mode="contained" onPress={applyFilters}>Apply Filters</Button>
+          <Button style={{marginTop:10}} mode="outlined" onPress={clearFilters}>Clear filters</Button>
         </Card>
       )}
     </View>

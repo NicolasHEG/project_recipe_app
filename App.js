@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { BottomNavigation, PaperProvider } from 'react-native-paper';
+import { Appbar, BottomNavigation, PaperProvider } from 'react-native-paper';
 import RecipeSearch from './components/RecipeSearch';
 import GroceryList from './components/GroceryList';
 import FavoriteMeals from './components/FavoriteMeals';
@@ -23,6 +23,9 @@ export default function App() {
 
   return (
     <PaperProvider>
+      <Appbar.Header>
+        <Appbar.Content title="What's in my fridge" />
+      </Appbar.Header>
       <NavigationContainer>
         <BottomNavigation
           navigationState={{ index, routes }}
