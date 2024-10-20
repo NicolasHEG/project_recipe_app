@@ -3,10 +3,13 @@ import { ScrollView, StyleSheet, SafeAreaView, View, Text } from 'react-native';
 import { Card, Title, Button } from 'react-native-paper';
 import { fetchRecipes } from '../api';
 import RecipesFilter from './RecipesFilter';
+import { useNavigation } from '@react-navigation/native';
 
 
 export default function RecipeSearch() {
 
+  const navigation = useNavigation();
+  
   const [recipes, setRecipes] = useState([]);
   const [filters, setFilters] = useState({ ingredients: '', intolerances: '', diet: '' });
 
@@ -41,7 +44,7 @@ export default function RecipeSearch() {
                 <Title>{recipe.title}</Title>
               </Card.Content>
               <Card.Actions>
-                <Button onPress={() => console.log(`View recipe ${recipe.id}`)}>View Recipe</Button>
+                <Button onPress={() => navigation.navigate('RecipeDetails', {recipe})}>View Recipe</Button>
               </Card.Actions>
             </Card>
           ))
