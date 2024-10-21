@@ -48,9 +48,9 @@ function CustomStackNavigation() {
   return (
     <Stack.Navigator>
       {/* Bottom Tabs */}
-      <Stack.Screen name="Back" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="BottomNavigation" component={BottomTabNavigator} options={{ headerShown: false, title: '' }} />
       {/* Stack Navigation for Recipe Detail */}
-      <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: 'Recipe details' }} />
+      <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: '' }} />
     </Stack.Navigator>
   );
 }

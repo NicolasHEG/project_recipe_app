@@ -15,10 +15,10 @@ export default function RecipeSearch() {
 
   const fetchRecipesApi = (filters) => {
     fetchRecipes(filters)
-      .then((data) => {
-        setRecipes(data.results);
-      })
-      .catch((error) => console.error('Error fetching recipes:', error));
+    .then((data) => {
+      setRecipes(data.results);
+    })
+    .catch((error) => console.error('Error fetching recipes:', error));
   };
 
   useEffect(() => {
