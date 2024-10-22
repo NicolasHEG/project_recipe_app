@@ -3,7 +3,7 @@ import { Image, View, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-n
 import { fetchRecipeDetails, fetchRecipeInstructions } from '../api';
 import { Button, Card, Icon, useTheme } from 'react-native-paper';
 import { app } from '../firebaseConfig';
-import { getDatabase, ref, push, remove, onValue } from "firebase/database";
+import { getDatabase, ref, push, remove, onValue, set } from "firebase/database";
 
 const database = getDatabase(app);
 
@@ -15,6 +15,7 @@ export default function RecipeDetails({ route, navigation }) {
   const [recipeInstructions, setRecipeInstructions] = useState([]);
 
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteId, setFavoriteId] = useState('');
 
   const fetchRecipeDetailsApi = (id) => {
     fetchRecipeDetails(id)
@@ -36,25 +37,47 @@ export default function RecipeDetails({ route, navigation }) {
 
   const handleSaveFavorite = () => {
     if (isFavorite) {
-      // Remove recipe from favorites
-      remove(ref(database, 'favorites', recipeDetails.id));
+      // Remove recipe from favorites 
+      remove(ref(database, `favorites/${favoriteId}`));
+      setIsFavorite(false);
+      setFavoriteId('');
     } else {
       // Save recipe to favorites
-      push(ref(database, 'favorites'), recipeDetails);
+      const newFavoriteRef = push(ref(database, 'favorites'));
+      set(newFavoriteRef, recipe);
+      setIsFavorite(true);
     }
-    checkIfIsFavorite();
   }
 
   const checkIfIsFavorite = () => {
-    onValue(ref + "/favorites", (snapshot) => {
+    const favoritesReference = ref(database, 'favorites');
+    onValue(favoritesReference, (snapshot) => {
+      // Retrieve favorites list from database
       const data = snapshot.val();
-      updateStarCount(postElement, data);
+      if (data) {
+        // Retrieve favorite recipe from list
+        const favoritesList = Object.values(data);
+        // Check if recipe is in favorites list
+        const favorite = favoritesList.find((favorite) => favorite.id === recipe.id);
+
+        if (favorite) {
+          setIsFavorite(true);
+          setFavoriteId(Object.keys(data).find(key => data[key].id === recipe.id));
+        } else {
+          setIsFavorite(false);
+        }
+      } else {
+        // If no favorite recorded in database
+        setIsFavorite(false);
+      }
     });
-  }
+  };
+
 
   useEffect(() => {
     fetchRecipeDetailsApi(recipe.id)
     fetchRecipeInstructionsApi(recipe.id);
+    checkIfIsFavorite();
   }, [recipe.id]);
 
   return (
@@ -67,7 +90,7 @@ export default function RecipeDetails({ route, navigation }) {
         </Card>
 
         <View>
-          {isFavorite && (
+          {!isFavorite && (
             <Button
             icon="heart-outline"
             mode="outlined"
@@ -77,7 +100,7 @@ export default function RecipeDetails({ route, navigation }) {
             Add to favorites
           </Button>
           )}
-          {!isFavorite && (
+          {isFavorite && (
             <Button
             icon="heart"
             mode="contained"
@@ -99,7 +122,7 @@ export default function RecipeDetails({ route, navigation }) {
               </View>
               <View style={styles.iconWrapper}>
                 <Icon size={26} source="timer-outline" color='black' />
-                <Text style={styles.iconText}>{recipeDetails.cookingMinutes} min</Text>
+                <Text style={styles.iconText}>{recipeDetails.readyInMinutes} min</Text>
               </View>          
             </View>
 

@@ -6,6 +6,7 @@ import GroceryList from './components/GroceryList';
 import FavoriteMeals from './components/FavoriteMeals';
 import RecipeDetails from './components/RecipeDetails'; 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Login from './components/Login';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,6 +32,7 @@ function BottomTabNavigator({ navigation, back }) {
     <PaperProvider>
       <Appbar.Header>
         <Appbar.Content title="What's in my fridge" />
+        <Appbar.Action icon="account" />
       </Appbar.Header>
       <BottomNavigation
         navigationState={{ index, routes }}
@@ -47,6 +49,7 @@ function BottomTabNavigator({ navigation, back }) {
 function CustomStackNavigation() {
   return (
     <Stack.Navigator>
+      <Stack.Screen name="Login" component={Login} options={{ title: 'Login' }} />
       {/* Bottom Tabs */}
       <Stack.Screen name="BottomNavigation" component={BottomTabNavigator} options={{ headerShown: false, title: '' }} />
       {/* Stack Navigation for Recipe Detail */}
