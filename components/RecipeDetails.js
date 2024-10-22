@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-native';
 import { fetchRecipeDetails, fetchRecipeInstructions } from '../api';
-import { Card, Icon, useTheme } from 'react-native-paper';
+import { Button, Card, Icon, useTheme } from 'react-native-paper';
+import { app } from '../firebaseConfig';
+import { getDatabase, ref, push, remove, onValue } from "firebase/database";
+
+const database = getDatabase(app);
 
 export default function RecipeDetails({ route, navigation }) {
   const { recipe } = route.params;
@@ -9,6 +13,8 @@ export default function RecipeDetails({ route, navigation }) {
 
   const [recipeDetails, setRecipeDetails] = useState({});
   const [recipeInstructions, setRecipeInstructions] = useState([]);
+
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const fetchRecipeDetailsApi = (id) => {
     fetchRecipeDetails(id)
@@ -28,6 +34,24 @@ export default function RecipeDetails({ route, navigation }) {
     .catch((error) => console.error('Error fetching recipe instructions:', error));
   }
 
+  const handleSaveFavorite = () => {
+    if (isFavorite) {
+      // Remove recipe from favorites
+      remove(ref(database, 'favorites', recipeDetails.id));
+    } else {
+      // Save recipe to favorites
+      push(ref(database, 'favorites'), recipeDetails);
+    }
+    checkIfIsFavorite();
+  }
+
+  const checkIfIsFavorite = () => {
+    onValue(ref + "/favorites", (snapshot) => {
+      const data = snapshot.val();
+      updateStarCount(postElement, data);
+    });
+  }
+
   useEffect(() => {
     fetchRecipeDetailsApi(recipe.id)
     fetchRecipeInstructionsApi(recipe.id);
@@ -41,6 +65,29 @@ export default function RecipeDetails({ route, navigation }) {
         <Card style={styles.card}>
           <Card.Cover source={{ uri: recipe.image }} resizeMode='cover'/>
         </Card>
+
+        <View>
+          {isFavorite && (
+            <Button
+            icon="heart-outline"
+            mode="outlined"
+            onPress={handleSaveFavorite}
+            style={{ margin: 10, borderColor: theme.colors.primary }}
+          >
+            Add to favorites
+          </Button>
+          )}
+          {!isFavorite && (
+            <Button
+            icon="heart"
+            mode="contained"
+            onPress={handleSaveFavorite}
+            style={{ margin: 10, backgroundColor: theme.colors.primary }}
+            >
+              Remove from favorites
+            </Button>
+          )}
+        </View>
         
         {/* Global info section */}
         <Card style={styles.card}>
