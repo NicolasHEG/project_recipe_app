@@ -7,6 +7,7 @@ import FavoriteMeals from './components/FavoriteMeals';
 import RecipeDetails from './components/RecipeDetails'; 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './components/Login';
+import Register from './components/Register';
 
 const Stack = createNativeStackNavigator();
 
@@ -50,6 +51,7 @@ function CustomStackNavigation() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Login" component={Login} options={{ title: 'Login' }} />
+      <Stack.Screen name="Register" component={Register} />
       {/* Bottom Tabs */}
       <Stack.Screen name="BottomNavigation" component={BottomTabNavigator} options={{ headerShown: false, title: '' }} />
       {/* Stack Navigation for Recipe Detail */}

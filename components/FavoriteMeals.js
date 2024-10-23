@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Image, View, Text, FlatList } from 'react-native';
 import { app } from '../firebaseConfig';
 import { getDatabase, onValue, ref } from "firebase/database";
+import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
 
 const database = getDatabase(app);
 
 export default function FavoriteMeals() {
+    const navigation = useNavigation();
+
     const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
@@ -30,6 +34,7 @@ export default function FavoriteMeals() {
                         <Text>
                             {item.title}
                         </Text>
+                        <Button onPress={() => navigation.navigate('RecipeDetails', { recipe: item })}>View Recipe</Button>
                     </View>
                 )}
             data={favorites}/>
