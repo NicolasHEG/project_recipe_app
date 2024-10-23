@@ -4,10 +4,13 @@ import { fetchRecipeDetails, fetchRecipeInstructions } from '../api';
 import { Button, Card, Icon, useTheme } from 'react-native-paper';
 import { app } from '../firebaseConfig';
 import { getDatabase, ref, push, remove, onValue, set } from "firebase/database";
+import { getAuth } from 'firebase/auth';
 
 const database = getDatabase(app);
 
 export default function RecipeDetails({ route, navigation }) {
+  const userId = getAuth().currentUser.uid;
+
   const { recipe } = route.params;
   const theme = useTheme();
 
@@ -36,24 +39,28 @@ export default function RecipeDetails({ route, navigation }) {
   }
 
   const handleSaveFavorite = () => {
-    if (isFavorite) {
+    if (!isFavorite) {
+      // Save recipe to favorites
+      const newFavoriteRef = push(ref(database, "users/" + userId +'/favorites'));
+      set(newFavoriteRef, recipeDetails);
+      setIsFavorite(true);
+      // Retrieve favorite id from reference
+      setFavoriteId(newFavoriteRef.key);
+    } else {
       // Remove recipe from favorites 
-      remove(ref(database, `favorites/${favoriteId}`));
+      remove(ref(database, "users/" + userId + `/favorites/${favoriteId}`));
       setIsFavorite(false);
       setFavoriteId('');
-    } else {
-      // Save recipe to favorites
-      const newFavoriteRef = push(ref(database, 'favorites'));
-      set(newFavoriteRef, recipe);
-      setIsFavorite(true);
     }
   }
 
   const checkIfIsFavorite = () => {
-    const favoritesReference = ref(database, 'favorites');
+    const favoritesReference = ref(database, "users/" + userId + '/favorites');
+    console.log(favoritesReference);
     onValue(favoritesReference, (snapshot) => {
       // Retrieve favorites list from database
       const data = snapshot.val();
+      console.log(data);
       if (data) {
         // Retrieve favorite recipe from list
         const favoritesList = Object.values(data);

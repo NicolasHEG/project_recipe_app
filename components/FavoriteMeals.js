@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Image, View, Text, FlatList } from 'react-native';
 import { app } from '../firebaseConfig';
-import { getDatabase, onValue, ref } from "firebase/database";
+import { get, getDatabase, onValue, ref } from "firebase/database";
 import { useNavigation } from '@react-navigation/native';
 import { Button } from 'react-native-paper';
+import { getAuth } from 'firebase/auth';
 
 const database = getDatabase(app);
 
 export default function FavoriteMeals() {
+    const userId = getAuth().currentUser.uid;
+
     const navigation = useNavigation();
 
     const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
-        const favoritesRef = ref(database, 'favorites');
+        const favoritesRef = ref(database, "users/" + userId + '/favorites');
         onValue(favoritesRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {

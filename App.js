@@ -8,8 +8,10 @@ import RecipeDetails from './components/RecipeDetails';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './components/Login';
 import Register from './components/Register';
+import { getAuth, signOut } from 'firebase/auth';
 
 const Stack = createNativeStackNavigator();
+const auth = getAuth();
 
 /**
  * Component to handle bottom tab navigation
@@ -29,11 +31,20 @@ function BottomTabNavigator({ navigation, back }) {
     groceryList: GroceryList,
   });
 
+  const handleSignout = () => {
+    signOut(auth).then(() => {
+      navigation.navigate('Login');
+    }).catch((error) => {
+      console.error('Error signing out:', error);
+    });
+  }
+
+
   return (
     <PaperProvider>
       <Appbar.Header>
         <Appbar.Content title="What's in my fridge" />
-        <Appbar.Action icon="account" />
+        <Appbar.Action icon="logout" onPress={handleSignout}/>
       </Appbar.Header>
       <BottomNavigation
         navigationState={{ index, routes }}

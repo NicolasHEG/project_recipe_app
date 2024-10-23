@@ -13,12 +13,10 @@ export default function Login() {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
 
     const handleLogin = () => {
-        console.log('Email:', email);
         const auth = getAuth();
         signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             const user = userCredential.user;
-            console.log('User logged in:', user);
             navigation.navigate('BottomNavigation');
         })
         .catch((error) => {

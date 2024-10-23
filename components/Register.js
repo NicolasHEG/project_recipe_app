@@ -7,21 +7,40 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function Register() {
 
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    // Errors
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+
 
     const handleRegister = () => {
+
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-
+            const user = userCredential.user;
+            console.log('User registered:', userCredential.user);
         })
         .catch((error) => {
-            // Error will display a message under the input field
-            console.error('Error registering user:', error);
+            const errorCode = error.code;
+            const errorMessage = error.message;
+
+            switch (errorCode) {
+                case 'auth/email-already-in-use':
+                    setEmailError('Email already in use');
+                    break;
+                case 'auth/invalid-email':
+                    setEmailError('Invalid email');
+                    break;
+                case 'auth/weak-password':
+                    console.error('Error registering user:', errorMessage);
+                    setPasswordError('Weak password');
+                    break;
+                default:
+                    console.error('Error registering user:', errorMessage);
+            }
         });
     }
 
@@ -30,25 +49,12 @@ export default function Register() {
             <SafeAreaView>
                 <View style={styles.mainContainer}>
                     <View style={styles.fieldContainer}>
-                        <TextInput
-                            label="Firstname"
-                            mode="outlined"
-                            value={firstName}
-                            onChangeText={text => setFirstName(text)}
-                        />
-                        <TextInput 
-                            label="Lastname"
-                            mode="outlined"
-                            value={lastName}
-                            onChangeText={text => setLastName(text)}
-                        />
                         <TextInput 
                             label="Email"
                             placeholder="example@email.com"
                             mode="outlined"
                             value={email}
                             onChangeText={text => setEmail(text)}
-                            error={email.length > 0 && !email.includes('@')}
                         />
                         <TextInput 
                             label="Password"
@@ -56,8 +62,9 @@ export default function Register() {
                             value={password}
                             onChangeText={text => setPassword(text)}
                             secureTextEntry
-                            error={password.length > 0 && password.length < 6}
                         />
+                        {passwordError ? <Text>{passwordError}</Text> : null}
+                        {emailError ? <Text>{emailError}</Text> : null}
                     </View>
                     <View>
                         <Button
