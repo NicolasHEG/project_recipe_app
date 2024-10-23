@@ -45,46 +45,68 @@ export default function Register() {
     }
 
     return(
-        <TouchableRipple onPress={Keyboard.dismiss}>
-            <SafeAreaView>
+        <TouchableRipple onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+            <View style={styles.safeArea}>
                 <View style={styles.mainContainer}>
-                    <View style={styles.fieldContainer}>
-                        <TextInput 
-                            label="Email"
-                            placeholder="example@email.com"
-                            mode="outlined"
-                            value={email}
-                            onChangeText={text => setEmail(text)}
-                        />
-                        <TextInput 
-                            label="Password"
-                            mode="outlined"
-                            value={password}
-                            onChangeText={text => setPassword(text)}
-                            secureTextEntry
-                        />
-                        {passwordError ? <Text>{passwordError}</Text> : null}
-                        {emailError ? <Text>{emailError}</Text> : null}
-                    </View>
-                    <View>
-                        <Button
-                            mode='contained'
-                            onPress={handleRegister}
-                        >
-                            Register
-                        </Button>
-                    </View>
+                    <TextInput
+                        label="Email"
+                        placeholder="example@email.com"
+                        mode="outlined"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
+                        style={styles.input}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        left={<TextInput.Icon icon="email-outline" />}
+                    />
+                    {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
+                    <TextInput
+                        label="Password"
+                        mode="outlined"
+                        value={password}
+                        onChangeText={text => setPassword(text)}
+                        secureTextEntry
+                        style={styles.input}
+                        left={<TextInput.Icon icon="lock-outline" />}
+                    />
+                    {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
+                    <Button
+                        mode="contained"
+                        onPress={handleRegister}
+                        style={styles.registerButton}
+                        contentStyle={styles.buttonContent}
+                    >
+                        Register
+                    </Button>
                 </View>
-            </SafeAreaView>
+            </View>
         </TouchableRipple>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
-    mainContainer: {
-        margin: 10
+    safeArea: {
+        flex: 1,
+        backgroundColor: "#f5f5f5",
     },
-    fieldContainer: {
-        marginBottom: 10
-    }
+    mainContainer: {
+        flex: 1,
+        justifyContent: "center",
+        paddingHorizontal: 20,
+    },
+    input: {
+        marginBottom: 15,
+    },
+    errorText: {
+        color: "red",
+        marginBottom: 10,
+    },
+    registerButton: {
+        marginTop: 20,
+    },
+    buttonContent: {
+        paddingVertical: 5,
+    },
 });

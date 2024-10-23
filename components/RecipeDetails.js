@@ -40,9 +40,8 @@ export default function RecipeDetails({ route, navigation }) {
 
   const handleSaveFavorite = () => {
     if (!isFavorite) {
-      // Save recipe to favorites
-      const newFavoriteRef = push(ref(database, "users/" + userId +'/favorites'));
-      set(newFavoriteRef, recipeDetails);
+      // Create a new referene in the database
+      const newFavoriteRef = push(ref(database, "users/" + userId +'/favorites'), recipeDetails);
       setIsFavorite(true);
       // Retrieve favorite id from reference
       setFavoriteId(newFavoriteRef.key);
@@ -79,6 +78,10 @@ export default function RecipeDetails({ route, navigation }) {
       }
     });
   };
+
+  const handleAddToGroceryList = (ingredients) => {
+    
+  }
 
 
   useEffect(() => {
@@ -117,6 +120,14 @@ export default function RecipeDetails({ route, navigation }) {
               Remove from favorites
             </Button>
           )}
+          <Button
+            icon="cart-outline"
+            mode="contained"
+            onPress={() => handleAddToGroceryList(recipeDetails.extendedIngredients)}
+            style={{ margin: 10 }}
+          >
+            Add to grocery list
+          </Button>
         </View>
         
         {/* Global info section */}

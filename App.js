@@ -61,7 +61,7 @@ function BottomTabNavigator({ navigation, back }) {
 function CustomStackNavigation() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Login" component={Login} options={{ title: 'Login' }} />
+      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
       <Stack.Screen name="Register" component={Register} />
       {/* Bottom Tabs */}
       <Stack.Screen name="BottomNavigation" component={BottomTabNavigator} options={{ headerShown: false, title: '' }} />
