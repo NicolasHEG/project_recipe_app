@@ -1,14 +1,14 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { Appbar, BottomNavigation, PaperProvider } from 'react-native-paper';
-import RecipeSearch from './components/RecipeSearch';
-import GroceryList from './components/GroceryList';
-import FavoriteMeals from './components/FavoriteMeals';
-import RecipeDetails from './components/RecipeDetails'; 
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Login from './components/Login';
-import Register from './components/Register';
-import { getAuth, signOut } from 'firebase/auth';
+import React from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { Appbar, BottomNavigation, PaperProvider } from "react-native-paper";
+import RecipeSearch from "./components/RecipeSearch";
+import GroceryList from "./components/GroceryList";
+import FavoriteMeals from "./components/FavoriteMeals";
+import RecipeDetails from "./components/RecipeDetails";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import { getAuth, signOut } from "firebase/auth";
 
 const Stack = createNativeStackNavigator();
 const auth = getAuth();
@@ -19,9 +19,24 @@ const auth = getAuth();
 function BottomTabNavigator({ navigation, back }) {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    { key: 'recipeSearch', title: 'Recipes', focusedIcon: 'text-box-search', unfocusedIcon: 'text-box-search-outline' },
-    { key: 'favoriteMeals', title: 'Favorites', focusedIcon: 'heart', unfocusedIcon: 'heart-outline' },
-    { key: 'groceryList', title: 'Groceries', focusedIcon: 'cart', unfocusedIcon: 'cart-outline' },
+    {
+      key: "recipeSearch",
+      title: "Recipes",
+      focusedIcon: "text-box-search",
+      unfocusedIcon: "text-box-search-outline",
+    },
+    {
+      key: "favoriteMeals",
+      title: "Favorites",
+      mfocusedIcon: "heart",
+      nunfocusedIcon: "heart-outline",
+    },
+    {
+      key: "groceryList",
+      title: "Groceries",
+      focusedIcon: "cart",
+      unfocusedIcon: "cart-outline",
+    },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
@@ -32,19 +47,20 @@ function BottomTabNavigator({ navigation, back }) {
   });
 
   const handleSignout = () => {
-    signOut(auth).then(() => {
-      navigation.navigate('Login');
-    }).catch((error) => {
-      console.error('Error signing out:', error);
-    });
-  }
-
+    signOut(auth)
+      .then(() => {
+        navigation.navigate("Login");
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+      });
+  };
 
   return (
     <PaperProvider>
       <Appbar.Header>
         <Appbar.Content title="What's in my fridge" />
-        <Appbar.Action icon="logout" onPress={handleSignout}/>
+        <Appbar.Action icon="logout" onPress={handleSignout} />
       </Appbar.Header>
       <BottomNavigation
         navigationState={{ index, routes }}
@@ -61,18 +77,30 @@ function BottomTabNavigator({ navigation, back }) {
 function CustomStackNavigation() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Register" component={Register} />
       {/* Bottom Tabs */}
-      <Stack.Screen name="BottomNavigation" component={BottomTabNavigator} options={{ headerShown: false, title: '' }} />
+      <Stack.Screen
+        name="BottomNavigation"
+        component={BottomTabNavigator}
+        options={{ headerShown: false, title: "" }}
+      />
       {/* Stack Navigation for Recipe Detail */}
-      <Stack.Screen name="RecipeDetails" component={RecipeDetails} options={{ title: '' }} />
+      <Stack.Screen
+        name="RecipeDetails"
+        component={RecipeDetails}
+        options={{ title: "" }}
+      />
     </Stack.Navigator>
   );
 }
 
 export default function App() {
-  return (      
+  return (
     <NavigationContainer>
       <CustomStackNavigation />
     </NavigationContainer>

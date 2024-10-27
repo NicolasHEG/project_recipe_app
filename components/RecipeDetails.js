@@ -3,7 +3,7 @@ import { Image, View, SafeAreaView, ScrollView, StyleSheet, Text } from 'react-n
 import { fetchRecipeDetails, fetchRecipeInstructions } from '../api';
 import { Button, Card, Icon, useTheme } from 'react-native-paper';
 import { app } from '../firebaseConfig';
-import { getDatabase, ref, push, remove, onValue, set } from "firebase/database";
+import { getDatabase, ref, push, remove, onValue, set, get } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 
 const database = getDatabase(app);
@@ -55,11 +55,9 @@ export default function RecipeDetails({ route, navigation }) {
 
   const checkIfIsFavorite = () => {
     const favoritesReference = ref(database, "users/" + userId + '/favorites');
-    console.log(favoritesReference);
     onValue(favoritesReference, (snapshot) => {
       // Retrieve favorites list from database
       const data = snapshot.val();
-      console.log(data);
       if (data) {
         // Retrieve favorite recipe from list
         const favoritesList = Object.values(data);
@@ -79,9 +77,71 @@ export default function RecipeDetails({ route, navigation }) {
     });
   };
 
-  const handleAddToGroceryList = (ingredients) => {
-    
-  }
+  const handleAddToGroceryList = async (ingredients) => {
+    // Loop through ingredients and add them to the grocery list
+    for (let i = 0; i < ingredients.length; i++) {
+      const ingredient = ingredients[i];
+
+      // Check if ingredient is already in the grocery list
+      let isInList = await checkIngredientInGroceryList(ingredient);
+
+      // If ingredient is not in the list then it is added
+      if (!isInList) {
+        push(ref(database, "users/" + userId + '/groceries/'), {
+          id: ingredient.id,
+          name: ingredient.nameClean,
+          amount: ingredient.measures.metric.amount,
+          unit: ingredient.measures.metric.unitLong,
+        });
+      } else {
+        // Retrieve groceries node
+        const groceriesReference = ref(database, "users/" + userId + '/groceries');
+
+        // Retrieve groceries list from database
+        // Chooses get() instead of onValue() to avoid multiple calls to the database
+        // and there is no need to keep the UI up to date with the DB in this case
+        get(groceriesReference).then((snapshot) => {
+          const data = snapshot.val();
+          const groceriesList = Object.values(data);
+          const ingredientInList = groceriesList.find((item) => item.id === ingredient.id);
+          const updatedAmount = ingredientInList.amount + ingredient.measures.metric.amount;
+
+          const groceryKey = Object.keys(data).find(key => data[key].id === ingredient.id);
+          set(ref(database, "users/" + userId + `/groceries/${groceryKey}`), {
+            ...ingredientInList,
+            amount: updatedAmount,
+          });
+        }).catch((error) => {
+          console.error('Error updating ingredient in grocery list:', error);
+        });
+      }
+    }
+  };
+
+  const checkIngredientInGroceryList = (ingredient) => {
+    // Use of promise to handle async operation. Without, the function would return before the async operation is completed
+    // leading to an undefined value instead of the expected boolean
+    return new Promise((resolve, reject) => {
+      const groceriesReference = ref(database, "users/" + userId + '/groceries');
+      
+      // Use get() instead of onValue() because only need to retrieve the data once
+      get(groceriesReference).then((snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const groceriesList = Object.values(data);
+          const ingredientInList = groceriesList.find((item) => item.id === ingredient.id);
+
+          // COnvert ingredient to boolean to return true or false depending if ingredient has been found
+          resolve(!!ingredientInList);
+        } else {
+          resolve(false);
+        }
+      }).catch((error) => {
+        console.error('Error checking ingredient in grocery list:', error);
+        reject(error);
+      });
+    });
+  };
 
 
   useEffect(() => {
