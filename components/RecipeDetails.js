@@ -5,6 +5,7 @@ import { Button, Card, Icon, useTheme } from 'react-native-paper';
 import { app } from '../firebaseConfig';
 import { getDatabase, ref, push, remove, onValue, set, get } from "firebase/database";
 import { getAuth } from 'firebase/auth';
+import RecipeInstructions from './RecipeInstructions';
 
 const database = getDatabase(app);
 
@@ -19,6 +20,8 @@ export default function RecipeDetails({ route, navigation }) {
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteId, setFavoriteId] = useState('');
+
+  const [showInstructions, setShowInstructions] = useState(false);
 
   const fetchRecipeDetailsApi = (id) => {
     fetchRecipeDetails(id)
@@ -242,20 +245,21 @@ export default function RecipeDetails({ route, navigation }) {
         </Card>
 
         {/* Instructions */}
-        <Card style={styles.card}>
-          <Card.Content>
-            <Text style={styles.sectionTitle}>Instructions</Text>
-            <View style={styles.ingredientsContainer}>
-              {recipeInstructions.length > 0 && recipeInstructions[0].steps.map((step) => (
-                <Text key={step.number} style={styles.ingredientText}>
-                  {step.number}. {step.step}
-                </Text>
-              ))}
-            </View>
-          </Card.Content>
-        </Card>
-        
-
+        <Button
+          icon="play"
+          mode="contained"
+          onPress={() => setShowInstructions(true)}
+          style={{ margin: 10 }}
+        >
+          Start cooking
+        </Button>
+        {showInstructions && (
+          console.log("instructions" + recipeInstructions),
+          <RecipeInstructions
+            instructions={recipeInstructions}
+            onClose={() => setShowInstructions(false)}
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
