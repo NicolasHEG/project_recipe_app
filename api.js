@@ -1,7 +1,9 @@
-export function fetchRecipes(filters) {
+export function fetchRecipes(filters, offset = 0) {
   const { ingredients, intolerances, diet } = filters;
 
-  let query = '';
+  // Add pagination to the query
+  let query = `number=5&offset=${offset}`;
+  
   if (ingredients) {
     query += `&includeIngredients=${ingredients}`;
   }
@@ -12,15 +14,13 @@ export function fetchRecipes(filters) {
     query += `&diet=${diet}`;
   }
 
-  
-  return fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/complexSearch?number=5&${query}&apiKey=${process.env.EXPO_PUBLIC_API_KEY}`)
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Fetch failed' + response.statusText);
-    } 
-    return response.json();
-
-  })
+  return fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/complexSearch?${query}&apiKey=${process.env.EXPO_PUBLIC_API_KEY}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Fetch failed: ' + response.statusText);
+      } 
+      return response.json();
+    });
   /*
  // Return hard coded json recipe
   return Promise.resolve({
