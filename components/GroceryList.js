@@ -1,8 +1,9 @@
 import { FlatList, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getDatabase, onValue, ref } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 import { app } from "../firebaseConfig";
+import { Text } from "react-native-paper";
 
 const database = getDatabase(app);
 
@@ -24,13 +25,12 @@ export default function GroceryList() {
         });
     }
 
+    useEffect(() => {
+        getGroceryList();
+    }, []);
+    
+
     return(
-        <ScrollView>
-            <FlatList>
-                {groceryList.map((groceryItem, index) => (
-                    <Text key={index}>{groceryItem}</Text>
-                ))}
-            </FlatList>
-        </ScrollView>
+        null
     );
 }

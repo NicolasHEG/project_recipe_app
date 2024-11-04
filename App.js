@@ -8,10 +8,14 @@ import RecipeDetails from "./components/RecipeDetails";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut, initializeAuth, getReactNativePersistence } from "firebase/auth";
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { app } from "./firebaseConfig";
 
 const Stack = createNativeStackNavigator();
-const auth = getAuth();
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+});
 
 /**
  * Component to handle bottom tab navigation
