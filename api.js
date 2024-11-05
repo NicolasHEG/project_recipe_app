@@ -1,5 +1,5 @@
 export function fetchRecipes(filters, offset = 0) {
-  /*
+  
     const { ingredients, intolerances, diet } = filters;
   
     // Add pagination to the query
@@ -22,7 +22,7 @@ export function fetchRecipes(filters, offset = 0) {
         } 
         return response.json();
       });
-  */
+  /*
   // Return hard coded json recipe
   return Promise.resolve({
     results: [
@@ -43,10 +43,11 @@ export function fetchRecipes(filters, offset = 0) {
       },
     ],
   });
+  */
 }
 
 export function fetchRecipeDetails(id) {
-  /*
+  
   console.log('fetchRecipeDetails', id);
     return fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/${id}/information?includeNutrition=false&addWinePairing=false&addTasteData=false&apiKey=${process.env.EXPO_PUBLIC_API_KEY}`)
     .then(response => {
@@ -56,7 +57,7 @@ export function fetchRecipeDetails(id) {
       return response.json();
     })
   
-  */
+  /*
   return Promise.resolve({
     id: 716429,
     title: "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
@@ -72,10 +73,11 @@ export function fetchRecipeDetails(id) {
     spoonacularSourceUrl:
       "https://spoonacular.com/pasta-with-garlic-scallions-cauliflower-breadcrumbs-716429",
   });
+  */
 }
 
 export function fetchRecipeInstructions(id) {
-  /*
+  
     return fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/${id}/analyzedInstructions?apiKey=${process.env.EXPO_PUBLIC_API_KEY}`)
     .then(response => {
       if (!response.ok) {
@@ -83,7 +85,7 @@ export function fetchRecipeInstructions(id) {
       } 
       return response.json();
     })
-    */
+    /*
 
   return Promise.resolve([
     {
@@ -116,4 +118,5 @@ export function fetchRecipeInstructions(id) {
       ],
     },
   ]);
+  */
 }
