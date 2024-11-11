@@ -9,7 +9,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
 import Register from "./Register";
 import {
-  getAuth,
   signOut,
   initializeAuth,
   getReactNativePersistence,
@@ -18,6 +17,7 @@ import {
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { app } from "../firebaseConfig";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Map } from "./Map";
 
 const Stack = createNativeStackNavigator();
 const auth = initializeAuth(app, {
@@ -48,12 +48,19 @@ function BottomTabNavigator() {
       focusedIcon: "cart",
       unfocusedIcon: "cart-outline",
     },
+    {
+      key: "map",
+      title: "Map",
+      focusedIcon: "map",
+      unfocusedIcon: "map-outline",
+    }
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
     recipeSearch: RecipeSearch,
     favoriteMeals: FavoriteMeals,
     groceryList: GroceryList,
+    map: Map
   });
 
   const handleSignout = () => {

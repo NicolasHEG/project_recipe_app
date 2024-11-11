@@ -30,6 +30,7 @@ export default function GroceryList() {
       }));
       console.log("groceryMap", groceryMap);
       setGroceryMap(groceryMap);
+      // Unsubscribe when the component unmounts to prevent memory leaks
       return () => unsubscribe();
     });
   };

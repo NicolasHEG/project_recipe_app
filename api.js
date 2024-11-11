@@ -120,3 +120,15 @@ export function fetchRecipeInstructions(id) {
   ]);
   */
 }
+
+
+export function getGroceryStores(location) {
+  console.log("Location " + location.latitude + " " + location.longitude);
+  return fetch(`${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"="supermarket"](around:2000,${location.latitude},${location.longitude});out body;`)
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Fetch error: ' + response.statusText);
+      }
+      return response.json();
+  })
+}
