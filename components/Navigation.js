@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { Appbar, BottomNavigation, PaperProvider } from "react-native-paper";
 import RecipeSearch from "./RecipeSearch";
 import GroceryList from "./GroceryList";
@@ -8,26 +7,20 @@ import RecipeDetails from "./RecipeDetails";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
 import Register from "./Register";
-import {
-  signOut,
-  initializeAuth,
-  getReactNativePersistence,
-  onAuthStateChanged,
-} from "firebase/auth";
-import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
-import { app } from "../firebaseConfig";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Map } from "./Map";
+import { MapViewComponent } from "./MapViewComponent";
+import { useAuthentication } from "../contexts/AuthenticationContext";
+
 
 const Stack = createNativeStackNavigator();
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-});
+
 
 /**
  * Component to handle bottom tab navigation
  */
 function BottomTabNavigator() {
+  const { logout } = useAuthentication();
+
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     {
@@ -60,13 +53,11 @@ function BottomTabNavigator() {
     recipeSearch: RecipeSearch,
     favoriteMeals: FavoriteMeals,
     groceryList: GroceryList,
-    map: Map
+    map: MapViewComponent
   });
 
   const handleSignout = () => {
-    signOut(auth)
-      .then(() => console.log("Signed out successfully"))
-      .catch((error) => console.error("Error signing out:", error));
+    logout();
   };
 
   return (
@@ -93,7 +84,7 @@ function CustomStackNavigation({ isAuthenticated }) {
       {isAuthenticated ? (
         <>
           <Stack.Screen
-            name="BottomNavigation"
+            name="Home"
             component={BottomTabNavigator}
             options={{ headerShown: false }}
           />
@@ -118,23 +109,8 @@ function CustomStackNavigation({ isAuthenticated }) {
 }
 
 export default function Navigation() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { user, loading } = useAuthentication();
+  if (loading) return null;
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user);
-      setLoading(false);
-    });
-
-    return unsubscribe;
-  }, []);
-
-  if (loading) return null; // Show a loading indicator while checking auth state
-
-  return (
-    <SafeAreaProvider>
-      <CustomStackNavigation isAuthenticated={isAuthenticated} />
-    </SafeAreaProvider>
-  );
+  return <CustomStackNavigation isAuthenticated={!!user} />;
 }

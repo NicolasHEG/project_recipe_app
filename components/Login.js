@@ -1,27 +1,24 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Alert } from "react-native";
 import { Button, TextInput, Title } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuthentication } from "../contexts/AuthenticationContext";
 
 export default function Login() {
   const navigation = useNavigation();
+  const { login } = useAuthentication();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
-  const handleLogin = () => {
-    const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        navigation.navigate("BottomNavigation");
-      })
-      .catch((error) => {
-        console.error("Error logging in:", error);
-      });
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
+      navigation.navigate("Home");
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (

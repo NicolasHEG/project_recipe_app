@@ -1,43 +1,21 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
 import { Button, TextInput, TouchableRipple } from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useAuthentication } from "../contexts/AuthenticationContext";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { register } = useAuthentication();
 
-  // Errors
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
-  const handleRegister = () => {
-    const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log("User registered:", userCredential.user);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        switch (errorCode) {
-          case "auth/email-already-in-use":
-            setEmailError("Email already in use");
-            break;
-          case "auth/invalid-email":
-            setEmailError("Invalid email");
-            break;
-          case "auth/weak-password":
-            console.error("Error registering user:", errorMessage);
-            setPasswordError("Weak password");
-            break;
-          default:
-            console.error("Error registering user:", errorMessage);
-        }
-      });
+  const handleRegister = async () => {
+    try {
+      await register(email, password);
+    } catch(error) {
+      console.log(error)
+    }
   };
 
   return (
@@ -55,9 +33,6 @@ export default function Register() {
             autoCapitalize="none"
             left={<TextInput.Icon icon="email-outline" />}
           />
-          {emailError ? (
-            <Text style={styles.errorText}>{emailError}</Text>
-          ) : null}
 
           <TextInput
             label="Password"
@@ -68,9 +43,6 @@ export default function Register() {
             style={styles.input}
             left={<TextInput.Icon icon="lock-outline" />}
           />
-          {passwordError ? (
-            <Text style={styles.errorText}>{passwordError}</Text>
-          ) : null}
 
           <Button
             mode="contained"
