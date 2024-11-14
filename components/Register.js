@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Keyboard } from "react-native";
 import { Button, TextInput, TouchableRipple } from "react-native-paper";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 
 export default function Register() {

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Image, View, Text, FlatList, StyleSheet, ScrollView } from 'react-native';
+import { Text, StyleSheet, ScrollView } from 'react-native';
 import { app } from '../firebaseConfig';
 import { get, getDatabase, onValue, ref } from "firebase/database";
 import { useNavigation } from '@react-navigation/native';
 import { Button, Card, Title } from 'react-native-paper';
-import { getAuth } from 'firebase/auth';
+import { useAuthentication } from '../contexts/AuthenticationContext';
 
 const database = getDatabase(app);
 
 export default function FavoriteMeals() {
-    const userId = getAuth().currentUser.uid;
+    const userId = useAuthentication().userId;
 
     const navigation = useNavigation();
 

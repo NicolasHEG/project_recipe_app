@@ -4,14 +4,14 @@ import { fetchRecipeDetails, fetchRecipeInstructions } from "../api";
 import { Button, Card, Icon, useTheme } from "react-native-paper";
 import { app } from "../firebaseConfig";
 import { getDatabase, ref, push, remove, onValue, get, set } from "firebase/database";
-import { getAuth } from "firebase/auth";
 import RecipeInstructions from "./RecipeInstructions";
+import { useAuthentication } from "../contexts/AuthenticationContext";
 
 const database = getDatabase(app);
 
 export default function RecipeDetails({ route, navigation }) {
 
-  const userId = getAuth().currentUser.uid;
+  const userId = useAuthentication().userId;
 
   const { recipe } = route.params;
   const theme = useTheme();

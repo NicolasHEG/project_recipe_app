@@ -1,14 +1,14 @@
 import { FlatList, View, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import { getDatabase, onValue, ref, set } from "firebase/database";
-import { getAuth } from "firebase/auth";
 import { Button, Card, Snackbar, Text } from "react-native-paper";
 import { app } from "../firebaseConfig";
+import { useAuthentication } from "../contexts/AuthenticationContext";
 
 const database = getDatabase(app);
 
 export default function GroceryList() {
-  const userId = getAuth().currentUser.uid;
+  const userId = useAuthentication().userId;
 
   const [groceryMap, setGroceryMap] = useState({});
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -76,7 +76,9 @@ export default function GroceryList() {
                     style={styles.checkButton}
                     icon="check"
                     labelStyle={{ color: 'white' }}
-                  />
+                  >
+                    Check
+                  </Button>
                 </View>
               </Card.Content>
             </Card>

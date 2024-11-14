@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Appbar, BottomNavigation, PaperProvider } from "react-native-paper";
 import RecipeSearch from "./RecipeSearch";
 import GroceryList from "./GroceryList";
@@ -7,7 +7,6 @@ import RecipeDetails from "./RecipeDetails";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
 import Register from "./Register";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { MapViewComponent } from "./MapViewComponent";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 
