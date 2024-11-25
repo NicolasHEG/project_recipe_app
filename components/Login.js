@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, Alert } from "react-native";
-import { Button, TextInput, Title } from "react-native-paper";
+import { Keyboard, View, StyleSheet, Text, Alert } from "react-native";
+import { Button, TouchableRipple } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useAuthentication } from "../contexts/AuthenticationContext";
+import AuthenticationForm from "./AuthenticationForm";
 
 export default function Login() {
   const navigation = useNavigation();
@@ -10,78 +11,32 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   const handleLogin = async () => {
     try {
       await login(email, password);
       navigation.navigate("Home");
     } catch (error) {
-      console.log(error)
+      Alert.alert("Login Failed", error.message);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Title>What's in my fridge ?</Title>
-      </View>
-
-      <View style={styles.form}>
-        <TextInput
-          mode="outlined"
-          label="Email"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-          style={styles.input}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          left={<TextInput.Icon icon="email-outline" />}
+    <TouchableRipple onPress={Keyboard.dismiss} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <AuthenticationForm
+          email={email}
+          setEmail={setEmail}
+          password={password}
+          setPassword={setPassword}
         />
-
-        {!isPasswordShown && (
-          <TextInput
-            mode="outlined"
-            label="Password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            secureTextEntry
-            style={styles.input}
-            left={<TextInput.Icon icon="lock-outline" />}
-            right={
-              <TextInput.Icon
-                icon="eye-outline"
-                onPress={() => setIsPasswordShown(true)}
-              />
-            }
-          />
-        )}
-        {isPasswordShown && (
-          <TextInput
-            mode="outlined"
-            label="Password"
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            style={styles.input}
-            left={<TextInput.Icon icon="lock-outline" />}
-            right={
-              <TextInput.Icon
-                icon="eye"
-                onPress={() => setIsPasswordShown(false)}
-              />
-            }
-          />
-        )}
-
         <Button
           mode="contained"
           onPress={handleLogin}
           style={styles.loginButton}
-          contentStyle={styles.buttonContent}
         >
           Login
         </Button>
-
         <Button
           mode="text"
           onPress={() => navigation.navigate("Register")}
@@ -91,7 +46,7 @@ export default function Login() {
           No account ? Register
         </Button>
       </View>
-    </View>
+    </TouchableRipple>
   );
 }
 
@@ -99,7 +54,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "#f5f5f5",
     padding: 20,
   },
   header: {
@@ -111,7 +65,6 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 20,
-    backgroundColor: "white",
   },
   loginButton: {
     marginTop: 20,
@@ -125,6 +78,5 @@ const styles = StyleSheet.create({
   },
   registerLabel: {
     fontSize: 14,
-    color: "#007BFF",
   },
 });

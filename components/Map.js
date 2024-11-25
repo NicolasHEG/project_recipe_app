@@ -33,7 +33,7 @@ export function Map({ location, groceryStores }) {
             latitude: store.lat,
             longitude: store.lon,
           }}
-          pinColor="green"
+          pinColor="red"
         >
           {/* Custom Callout */}
           <Callout tooltip>

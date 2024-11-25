@@ -1,5 +1,5 @@
 import React from "react";
-import { Appbar, BottomNavigation, PaperProvider } from "react-native-paper";
+import { Appbar, BottomNavigation } from "react-native-paper";
 import RecipeSearch from "./RecipeSearch";
 import GroceryList from "./GroceryList";
 import FavoriteMeals from "./FavoriteMeals";
@@ -52,10 +52,6 @@ function BottomTabNavigator() {
     groceryList: GroceryList,
     map: MapViewComponent,
   });
-
-  const handleSignout = () => {
-    logout();
-  };
 
   return (
     <>
