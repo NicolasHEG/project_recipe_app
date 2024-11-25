@@ -47,9 +47,9 @@ export function fetchRecipes(filters, offset = 0) {
 }
 
 export function fetchRecipeDetails(id) {
-  
-  console.log('fetchRecipeDetails', id);
-    return fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/${id}/information?includeNutrition=false&addWinePairing=false&addTasteData=false&apiKey=${process.env.EXPO_PUBLIC_API_KEY}`)
+  let URL = `${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/${id}/information?includeNutrition=true&addWinePairing=false&addTasteData=false&apiKey=${process.env.EXPO_PUBLIC_API_KEY}`;
+  console.log('fetchRecipeDetails', URL);
+    return fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL}/recipes/${id}/information?includeNutrition=true&addWinePairing=false&addTasteData=false&apiKey=${process.env.EXPO_PUBLIC_API_KEY}`)
     .then(response => {
       if (!response.ok) {
         throw new Error('Fetch failed' + response.statusText);
@@ -123,7 +123,6 @@ export function fetchRecipeInstructions(id) {
 
 
 export function getGroceryStores(location) {
-  console.log("Location " + location.latitude + " " + location.longitude);
   return fetch(`${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"="supermarket"](around:2000,${location.latitude},${location.longitude});out body;`)
   .then(response => {
       if (!response.ok) {

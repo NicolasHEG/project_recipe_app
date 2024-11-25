@@ -10,9 +10,7 @@ import Register from "./Register";
 import { MapViewComponent } from "./MapViewComponent";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 
-
 const Stack = createNativeStackNavigator();
-
 
 /**
  * Component to handle bottom tab navigation
@@ -45,14 +43,14 @@ function BottomTabNavigator() {
       title: "Map",
       focusedIcon: "map",
       unfocusedIcon: "map-outline",
-    }
+    },
   ]);
 
   const renderScene = BottomNavigation.SceneMap({
     recipeSearch: RecipeSearch,
     favoriteMeals: FavoriteMeals,
     groceryList: GroceryList,
-    map: MapViewComponent
+    map: MapViewComponent,
   });
 
   const handleSignout = () => {
@@ -60,19 +58,23 @@ function BottomTabNavigator() {
   };
 
   return (
-    <PaperProvider>
-      <Appbar.Header>
-        <Appbar.Content title="What's in my fridge" />
-        <Appbar.Action icon="logout" onPress={handleSignout} />
-      </Appbar.Header>
+    <>
+      <AppHeader onSignout={logout} />
       <BottomNavigation
         navigationState={{ index, routes }}
         onIndexChange={setIndex}
         renderScene={renderScene}
       />
-    </PaperProvider>
+    </>
   );
 }
+
+const AppHeader = ({ onSignout }) => (
+  <Appbar.Header>
+    <Appbar.Content title="What's in my fridge" />
+    <Appbar.Action icon="logout" onPress={onSignout} />
+  </Appbar.Header>
+);
 
 /**
  * Component to handle stack navigation
