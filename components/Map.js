@@ -4,7 +4,7 @@ import MapView, { Marker, Callout } from "react-native-maps";
 import { Card, Text, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-export function Map({ location, groceryStores }) {
+export function Map({ location, supermarkets, groceryStores, convenienceStores }) {
   return (
     <MapView
       style={{ flex: 1 }}
@@ -26,7 +26,7 @@ export function Map({ location, groceryStores }) {
       />
 
       {/* Grocery Store Markers */}
-      {groceryStores.map((store, index) => (
+      {supermarkets.map((store, index) => (
         <Marker
           key={index}
           coordinate={{
@@ -34,6 +34,110 @@ export function Map({ location, groceryStores }) {
             longitude: store.lon,
           }}
           pinColor="red"
+        >
+          {/* Custom Callout */}
+          <Callout tooltip>
+            <View style={styles.calloutContainer}>
+              <Card style={styles.card}>
+                <Card.Content>
+                  {/* Store Name */}
+                  <View style={styles.header}>
+                    <Icon name="storefront-outline" size={20} color="#6200EE" />
+                    <Text variant="titleMedium" style={styles.title}>
+                      {store.tags.name || "Unnamed Store"}
+                    </Text>
+                  </View>
+                  <Divider style={styles.divider} />
+
+                  {/* Store Details */}
+                  <View style={styles.detailRow}>
+                    <Icon name="map-marker-outline" size={16} color="#757575" />
+                    <Text style={styles.detailText}>
+                      {store.tags["addr:street"] || "Street: Not available"}{" "}
+                      {store.tags["addr:housenumber"] || ""}
+                    </Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Icon name="city-variant-outline" size={16} color="#757575" />
+                    <Text style={styles.detailText}>
+                      {store.tags["addr:postcode"] || ""}{" "}
+                      {store.tags["addr:city"] || "City: Not available"}
+                    </Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Icon name="clock-outline" size={16} color="#757575" />
+                    <Text style={styles.detailText}>
+                      {store.tags["opening_hours"] || "Hours: Not available"}
+                    </Text>
+                  </View>
+                </Card.Content>
+              </Card>
+            </View>
+          </Callout>
+        </Marker>
+      ))}
+
+      {/* Grocery Store Markers */}
+      {groceryStores.map((store, index) => (
+        <Marker
+          key={index}
+          coordinate={{
+            latitude: store.lat,
+            longitude: store.lon,
+          }}
+          pinColor="green"
+        >
+          {/* Custom Callout */}
+          <Callout tooltip>
+            <View style={styles.calloutContainer}>
+              <Card style={styles.card}>
+                <Card.Content>
+                  {/* Store Name */}
+                  <View style={styles.header}>
+                    <Icon name="storefront-outline" size={20} color="#6200EE" />
+                    <Text variant="titleMedium" style={styles.title}>
+                      {store.tags.name || "Unnamed Store"}
+                    </Text>
+                  </View>
+                  <Divider style={styles.divider} />
+
+                  {/* Store Details */}
+                  <View style={styles.detailRow}>
+                    <Icon name="map-marker-outline" size={16} color="#757575" />
+                    <Text style={styles.detailText}>
+                      {store.tags["addr:street"] || "Street: Not available"}{" "}
+                      {store.tags["addr:housenumber"] || ""}
+                    </Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Icon name="city-variant-outline" size={16} color="#757575" />
+                    <Text style={styles.detailText}>
+                      {store.tags["addr:postcode"] || ""}{" "}
+                      {store.tags["addr:city"] || "City: Not available"}
+                    </Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Icon name="clock-outline" size={16} color="#757575" />
+                    <Text style={styles.detailText}>
+                      {store.tags["opening_hours"] || "Hours: Not available"}
+                    </Text>
+                  </View>
+                </Card.Content>
+              </Card>
+            </View>
+          </Callout>
+        </Marker>
+      ))}
+
+      {/* Convenience Store Markers */}
+      {convenienceStores.map((store, index) => (
+        <Marker
+          key={index}
+          coordinate={{
+            latitude: store.lat,
+            longitude: store.lon,
+          }}
+          pinColor="orange"
         >
           {/* Custom Callout */}
           <Callout tooltip>

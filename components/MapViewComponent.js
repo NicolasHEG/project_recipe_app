@@ -1,14 +1,33 @@
 import * as Location from "expo-location";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Alert, View, ActivityIndicator, StyleSheet } from "react-native";
 import { getGroceryStores } from "../api";
 import { Map } from "./Map";
+import { Card, Chip, SegmentedButtons } from "react-native-paper";
+// debounce is a utility function that limits the number of times a function is called in a given time frame
+import debounce from "lodash.debounce";
 
 export function MapViewComponent() {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [groceryStores, setGroceryStores] = useState([]);
+  const [stores, setStores] = useState({
+    supermarkets: [],
+    groceries: [],
+    conveniences: [],
+  });
   const [fetchingStores, setFetchingStores] = useState(false);
+  const [storeSelection, setStoreSelection] = useState({
+    supermarket: true,
+    convenience: true,
+    grocery: true,
+  });
+  const [storeCache, setStoreCache] = useState({
+    supermarkets: [],
+    groceries: [],
+    conveniences: [],
+  });
+
+  const [selectedRadius, setSelectedRadius] = useState(5000);
 
   const fetchLocation = async () => {
     try {
@@ -19,14 +38,12 @@ export function MapViewComponent() {
         setLoading(false);
         return;
       }
-
       // Try fetching a cached location first
       const cachedLocation = await Location.getLastKnownPositionAsync();
       if (cachedLocation) {
         setLocation(cachedLocation);
         return;
       }
-
       // Fetch a fresh location
       const freshLocation = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
@@ -37,7 +54,7 @@ export function MapViewComponent() {
       console.error("Error fetching location:", error);
       Alert.alert("Failed to fetch location. Please try again.");
     } finally {
-      setLoading(false); // Stop loading after trying to fetch location
+      setLoading(false);
     }
   };
 
@@ -46,12 +63,9 @@ export function MapViewComponent() {
       return;
     }
 
-    setFetchingStores(true); // Indicate stores are being fetched
+    setFetchingStores(true);
 
     try {
-      console.log("Start fetching grocery stores");
-      console.log("Location " + location.coords.latitude + " " + location.coords.longitude);
-
       const region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -59,27 +73,49 @@ export function MapViewComponent() {
         longitudeDelta: 0.0421,
       };
 
-      const data = await getGroceryStores(region);
-      console.log("API response in app.js", JSON.stringify(data));
-      setGroceryStores(data.elements);
+      const newStores = { ...storeCache };
+
+      if (storeSelection.supermarket && newStores.supermarkets.length === 0) {
+        const data = await getGroceryStores(region, "supermarket");
+        newStores.supermarkets = data.elements;
+      }
+      if (storeSelection.convenience && newStores.conveniences.length === 0) {
+        const data = await getGroceryStores(region, "convenience");
+        newStores.conveniences = data.elements;
+      }
+      if (storeSelection.grocery && newStores.groceries.length === 0) {
+        const data = await getGroceryStores(region, "grocery");
+        newStores.groceries = data.elements;
+      }
+
+      setStoreCache(newStores);
+      setStores({
+        supermarkets: storeSelection.supermarket ? newStores.supermarkets : [],
+        groceries: storeSelection.grocery ? newStores.groceries : [],
+        conveniences: storeSelection.convenience ? newStores.conveniences : [],
+      });
     } catch (error) {
       console.error("Error fetching grocery stores:", error);
     } finally {
-      setFetchingStores(false); // Reset fetching state
+      setFetchingStores(false);
     }
   };
 
-  // Fetch location on component mount
+  // Debounce the fetchGroceryStores function to prevent multiple calls in a short time
+  const debouncedFetchGroceryStores = useCallback(
+    debounce(fetchGroceryStores, 300),
+    [location, storeSelection]
+  );
+
   useEffect(() => {
     fetchLocation();
   }, []);
 
-  // Fetch grocery stores when the location is available
   useEffect(() => {
     if (location) {
-      fetchGroceryStores();
+      debouncedFetchGroceryStores();
     }
-  }, [location]);
+  }, [location, storeSelection]);
 
   if (loading) {
     return (
@@ -105,7 +141,50 @@ export function MapViewComponent() {
   };
 
   return (
-    <Map location={location.coords} groceryStores={groceryStores} />
+    <View style={{ flex: 1 }}>
+      <View style={{ flex: 1, marginVertical: 10 }}>
+        <Card>
+          <Card.Content>
+            {Object.keys(storeSelection).map((type) => (
+              <Chip
+                key={type}
+                selected={storeSelection[type]}
+                onPress={() =>
+                  setStoreSelection((prev) => ({
+                    ...prev,
+                    // If the store type is selected, deselect it and vice verse
+                    [type]: !prev[type],
+                  }))
+                }
+              >
+                {/* Capitalize the first letter of the store type */}
+                {type.charAt(0).toUpperCase() + type.slice(1)} Stores
+              </Chip>
+            ))}
+            {/* Segemented buttons to manage search radius on map */}
+            <SegmentedButtons
+              value={selectedRadius}
+              onValueChange={(value) => setSelectedRadius(value)}
+              buttons={[
+                { label: "1 km", value: 1000 },
+                { label: "2 km", value: 2000 },
+                { label: "5 km", value: 5000 },
+                { label: "10 km", value: 10000 },
+              ]}
+            />
+          </Card.Content>
+        </Card>
+      </View>
+      <View style={{ flex: 4 }}>
+        <Map
+          location={location.coords}
+          supermarkets={stores.supermarkets}
+          groceryStores={stores.groceries}
+          convenienceStores={stores.conveniences}
+          radius={selectedRadius}
+        />
+      </View>
+    </View>
   );
 }
 

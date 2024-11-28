@@ -122,8 +122,10 @@ export function fetchRecipeInstructions(id) {
 }
 
 
-export function getGroceryStores(location) {
-  return fetch(`${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"="supermarket"](around:2000,${location.latitude},${location.longitude});out body;`)
+export function getGroceryStores(location, storeType, radius) {
+  const URL = `${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"=${storeType}](around:${radius},${location.latitude},${location.longitude});out body;`;
+  console.log('getGroceryStores', URL);
+  return fetch(`${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"=${storeType}](around:${radius},${location.latitude},${location.longitude});out body;`)
   .then(response => {
       if (!response.ok) {
           throw new Error('Fetch error: ' + response.statusText);
@@ -131,3 +133,4 @@ export function getGroceryStores(location) {
       return response.json();
   })
 }
+
