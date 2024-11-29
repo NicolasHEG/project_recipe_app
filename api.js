@@ -123,8 +123,6 @@ export function fetchRecipeInstructions(id) {
 
 
 export function getGroceryStores(location, storeType, radius) {
-  const URL = `${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"=${storeType}](around:${radius},${location.latitude},${location.longitude});out body;`;
-  console.log('getGroceryStores', URL);
   return fetch(`${process.env.EXPO_PUBLIC_MAP_API}?data=[out:json];node["shop"=${storeType}](around:${radius},${location.latitude},${location.longitude});out body;`)
   .then(response => {
       if (!response.ok) {

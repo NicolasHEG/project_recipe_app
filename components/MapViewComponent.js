@@ -1,40 +1,33 @@
 import * as Location from "expo-location";
 import React, { useEffect, useState, useCallback } from "react";
-import { Alert, View, ActivityIndicator, StyleSheet } from "react-native";
+import { Alert, View, ActivityIndicator, StyleSheet, Text } from "react-native";
 import { getGroceryStores } from "../api";
 import { Map } from "./Map";
 import { Card, Chip, SegmentedButtons } from "react-native-paper";
-// debounce is a utility function that limits the number of times a function is called in a given time frame
 import debounce from "lodash.debounce";
 
 export function MapViewComponent() {
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [fetchingStores, setFetchingStores] = useState(false);
   const [stores, setStores] = useState({
     supermarkets: [],
     groceries: [],
     conveniences: [],
   });
-  const [fetchingStores, setFetchingStores] = useState(false);
   const [storeSelection, setStoreSelection] = useState({
     supermarket: true,
     convenience: true,
     grocery: true,
   });
-  const [storeCache, setStoreCache] = useState({
-    supermarkets: [],
-    groceries: [],
-    conveniences: [],
-  });
-
-  const [selectedRadius, setSelectedRadius] = useState(5000);
+  const [selectedRadius, setSelectedRadius] = useState("5000");
+  const [storeCache, setStoreCache] = useState({});
 
   const fetchLocation = async () => {
     try {
-      // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("No permission to get location");
+        Alert.alert("Permission to access location was denied.");
         setLoading(false);
         return;
       }
@@ -58,53 +51,50 @@ export function MapViewComponent() {
     }
   };
 
-  const fetchGroceryStores = async () => {
-    if (fetchingStores) {
-      return;
-    }
-
+  const fetchGroceryStores = useCallback(async () => {
+    if (!location) return;
     setFetchingStores(true);
 
+    const region = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    };
+
+    const newStores = { ...storeCache };
+
     try {
-      const region = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      };
+      // Fetch data for selected store types
+      await Promise.all(
+        Object.keys(storeSelection).map(async (type) => {
+          if (storeSelection[type]) {
+            if (!newStores[type]?.[selectedRadius]) {
+              const data = await getGroceryStores(region, type, selectedRadius);
+              newStores[type] = { ...newStores[type], [selectedRadius]: data.elements };
+            }
+          }
+        })
+      );
 
-      const newStores = { ...storeCache };
-
-      if (storeSelection.supermarket && newStores.supermarkets.length === 0) {
-        const data = await getGroceryStores(region, "supermarket");
-        newStores.supermarkets = data.elements;
-      }
-      if (storeSelection.convenience && newStores.conveniences.length === 0) {
-        const data = await getGroceryStores(region, "convenience");
-        newStores.conveniences = data.elements;
-      }
-      if (storeSelection.grocery && newStores.groceries.length === 0) {
-        const data = await getGroceryStores(region, "grocery");
-        newStores.groceries = data.elements;
-      }
+      setStores({
+        supermarkets: storeSelection.supermarket ? newStores.supermarket?.[selectedRadius] || [] : [],
+        groceries: storeSelection.grocery ? newStores.grocery?.[selectedRadius] || [] : [],
+        conveniences: storeSelection.convenience ? newStores.convenience?.[selectedRadius] || [] : [],
+      });
 
       setStoreCache(newStores);
-      setStores({
-        supermarkets: storeSelection.supermarket ? newStores.supermarkets : [],
-        groceries: storeSelection.grocery ? newStores.groceries : [],
-        conveniences: storeSelection.convenience ? newStores.conveniences : [],
-      });
     } catch (error) {
       console.error("Error fetching grocery stores:", error);
     } finally {
       setFetchingStores(false);
     }
-  };
+  }, [location, storeSelection, selectedRadius, storeCache]);
 
   // Debounce the fetchGroceryStores function to prevent multiple calls in a short time
   const debouncedFetchGroceryStores = useCallback(
     debounce(fetchGroceryStores, 300),
-    [location, storeSelection]
+    [fetchGroceryStores]
   );
 
   useEffect(() => {
@@ -115,7 +105,7 @@ export function MapViewComponent() {
     if (location) {
       debouncedFetchGroceryStores();
     }
-  }, [location, storeSelection]);
+  }, [location, storeSelection, selectedRadius]);
 
   if (loading) {
     return (
@@ -128,7 +118,7 @@ export function MapViewComponent() {
   if (!location) {
     return (
       <View style={styles.errorContainer}>
-        <Alert alert="Failed to fetch location. Please try again." />
+        <Text>Failed to fetch location. Please try again.</Text>
       </View>
     );
   }
@@ -142,8 +132,18 @@ export function MapViewComponent() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, marginVertical: 10 }}>
-        <Card>
+      <Map
+        location={location.coords}
+        supermarkets={stores.supermarkets}
+        groceryStores={stores.groceries}
+        convenienceStores={stores.conveniences}
+        radius={selectedRadius}
+        style={styles.map}
+      />
+
+      {/* Filter Section */}
+      <View style={styles.filterSection}>
+        <Card style={styles.card}>
           <Card.Content>
             {Object.keys(storeSelection).map((type) => (
               <Chip
@@ -152,53 +152,69 @@ export function MapViewComponent() {
                 onPress={() =>
                   setStoreSelection((prev) => ({
                     ...prev,
-                    // If the store type is selected, deselect it and vice verse
                     [type]: !prev[type],
                   }))
                 }
+                style={{ margin: 2 }}
               >
-                {/* Capitalize the first letter of the store type */}
                 {type.charAt(0).toUpperCase() + type.slice(1)} Stores
               </Chip>
             ))}
-            {/* Segemented buttons to manage search radius on map */}
             <SegmentedButtons
               value={selectedRadius}
               onValueChange={(value) => setSelectedRadius(value)}
               buttons={[
-                { label: "1 km", value: 1000 },
-                { label: "2 km", value: 2000 },
-                { label: "5 km", value: 5000 },
-                { label: "10 km", value: 10000 },
+                { label: "1 km", value: "1000" },
+                { label: "2 km", value: "2000" },
+                { label: "5 km", value: "5000" },
+                { label: "10 km", value: "10000" },
               ]}
+              style={{ marginTop: 10 }}
             />
           </Card.Content>
         </Card>
       </View>
-      <View style={{ flex: 4 }}>
-        <Map
-          location={location.coords}
-          supermarkets={stores.supermarkets}
-          groceryStores={stores.groceries}
-          convenienceStores={stores.conveniences}
-          radius={selectedRadius}
-        />
-      </View>
+      {fetchingStores && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text style={styles.loadingText}>Loading stores...</Text>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  map: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    zIndex: 0,
   },
-  errorContainer: {
-    flex: 1,
+  filterSection: {
+    position: "absolute",
+    top: 20,
+    left: 20,
+    right: 20,
+    maxHeight: "25%",
+    zIndex: 1,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+  },
+  loadingOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "#ffffffb3",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f8f9fa",
+    zIndex: 1000,
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#000",
   },
 });
