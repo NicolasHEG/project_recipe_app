@@ -9,7 +9,7 @@ import { PaperProvider } from "react-native-paper";
 export default function App() {
   return (
     <SafeAreaProvider>
-      <PaperProvider theme={commonTheme}>
+      <PaperProvider>
         <AuthenticationProvider>
           <NavigationContainer>
             <Navigation />

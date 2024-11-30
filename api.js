@@ -1,8 +1,7 @@
 export function fetchRecipes(filters, offset = 0) {
   
     const { ingredients, intolerances, diet } = filters;
-  
-    // Add pagination to the query
+
     let query = `number=5&offset=${offset}`;
     
     if (ingredients) {

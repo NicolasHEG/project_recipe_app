@@ -34,40 +34,58 @@ export default function GroceryItem({ item, onDelete }) {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    margin: 5,
+    marginBottom: 10,
+    marginHorizontal: 15,
   },
   card: {
-    margin: 5,
+    marginVertical: 5,
+    borderRadius: 12,
+    elevation: 3,
+    backgroundColor: "#FFFFFF",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
   },
   cardContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingVertical: 12,
+    paddingHorizontal: 18,
   },
   amountContainer: {
     flex: 1,
+    paddingRight: 10,
   },
   amountText: {
-    flexWrap: "wrap",
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#555",
   },
   nameContainer: {
-    flex: 1,
+    flex: 2,
+    paddingHorizontal: 12,
   },
-  nameText: {},
+  nameText: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#333",
+  },
   buttonContainer: {
-    flex: 1,
+    justifyContent: "center",
     alignItems: "flex-end",
   },
   checkButton: {
-    borderRadius: 5,
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    backgroundColor: "#00796B",
+    borderWidth: 0,
   },
   checkButtonLabel: {
     color: "white",
-  },
-  verticalDivider: {
-    width: 1,
-    height: "100%",
-    backgroundColor: "black",
-    marginHorizontal: 10,
+    fontWeight: "600",
+    fontSize: 14,
   },
 });

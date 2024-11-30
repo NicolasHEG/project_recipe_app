@@ -103,18 +103,37 @@ export default function RecipeSearch() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
   },
   searchBoxPlaceholder: {
     height: 50,
     marginBottom: 10,
-    backgroundColor: '#f5f5f5', 
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
+    paddingHorizontal: 10,
   },
   container: {
-    padding: 10,
+    padding: 15,
     paddingBottom: 40,
   },
   card: {
-    marginBottom: 10,
-  }
+    marginBottom: 15,
+    padding: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  noRecipesText: {
+    fontSize: 16,
+    color: '#888888',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  activityIndicator: {
+    marginTop: 20,
+  },
 });

@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { Icon } from "react-native-paper";
 
-export default function RecipeNutrition({ recipeDetails, styles }) {
+export default function RecipeNutrition({ recipeDetails }) {
+  // Get the nutrition data from the recipe details or set it to an empty array
   const nutrients = recipeDetails.nutrition
     ? recipeDetails.nutrition.nutrients
     : [];
+  // Get the amount of a nutrient
   const getNutrient = (name) =>
     nutrients.find((nutrient) => nutrient.name === name)?.amount.toFixed(0) ||
     0;
@@ -43,3 +45,20 @@ export default function RecipeNutrition({ recipeDetails, styles }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  infoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    marginVertical: 10,
+  },
+  iconWrapper: {
+    alignItems: "center",
+    marginHorizontal: 10,
+  },
+  iconText: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#555",
+  },
+});

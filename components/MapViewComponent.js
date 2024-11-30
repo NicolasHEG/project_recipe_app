@@ -137,8 +137,6 @@ export function MapViewComponent() {
         supermarkets={stores.supermarkets}
         groceryStores={stores.groceries}
         convenienceStores={stores.conveniences}
-        radius={selectedRadius}
-        style={styles.map}
       />
 
       {/* Filter Section */}

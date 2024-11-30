@@ -1,7 +1,7 @@
 import { FlatList, View, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import { getDatabase, onValue, ref, set } from "firebase/database";
-import { Button, Card, Snackbar, Text } from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import { app } from "../firebaseConfig";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 import GroceryItem from "./GroceryItem";
@@ -50,26 +50,26 @@ export default function GroceryList() {
 
   return (
     <View style={styles.container}>
-    <FlatList
-      data={Object.values(groceryMap)}
-      keyExtractor={(item) => item.key}
-      renderItem={({ item }) => (
-        <GroceryItem item={item} onDelete={handleDeleteGrocery} />
-      )}
-    />
-    <Snackbar
-      visible={snackbarVisible}
-      onDismiss={onDismissSnackBar}
-      action={{
-        label: "Close",
-        onPress: () => setSnackbarVisible(false),
-      }}
-      style={styles.snackbar}
-      duration={1600}
-    >
-      Your grocery list has been updated
-    </Snackbar>
-  </View>
+      <FlatList
+        data={Object.values(groceryMap)}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <GroceryItem item={item} onDelete={handleDeleteGrocery} />
+        )}
+      />
+      <Snackbar
+        visible={snackbarVisible}
+        onDismiss={onDismissSnackBar}
+        action={{
+          label: "Dismiss",
+          onPress: () => setSnackbarVisible(false),
+        }}
+        style={styles.snackbar}
+        duration={1600}
+      >
+        Your grocery list has been updated !
+      </Snackbar>
+    </View>
   );
 }
 
@@ -80,8 +80,5 @@ const styles = StyleSheet.create({
   snackbar: {
     borderRadius: 50,
     padding: 7,
-  },
-  checkButton: {
-    borderRadius: 5,
   },
 });
