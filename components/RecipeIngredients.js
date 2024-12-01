@@ -8,7 +8,8 @@ export default function RecipeIngredients({ recipeDetails }) {
         recipeDetails.extendedIngredients.map((ingredient) => (
           <View key={ingredient.id} style={styles.ingredientCard}>
             <Text style={styles.ingredientText}>
-              {ingredient.measures.metric.amount} {ingredient.measures.metric.unitLong}
+              {ingredient.measures.metric.amount}{" "}
+              {ingredient.measures.metric.unitLong}
             </Text>
             <Text style={styles.ingredientName}>{ingredient.nameClean}</Text>
           </View>

@@ -71,16 +71,25 @@ export function MapViewComponent() {
           if (storeSelection[type]) {
             if (!newStores[type]?.[selectedRadius]) {
               const data = await getGroceryStores(region, type, selectedRadius);
-              newStores[type] = { ...newStores[type], [selectedRadius]: data.elements };
+              newStores[type] = {
+                ...newStores[type],
+                [selectedRadius]: data.elements,
+              };
             }
           }
         })
       );
 
       setStores({
-        supermarkets: storeSelection.supermarket ? newStores.supermarket?.[selectedRadius] || [] : [],
-        groceries: storeSelection.grocery ? newStores.grocery?.[selectedRadius] || [] : [],
-        conveniences: storeSelection.convenience ? newStores.convenience?.[selectedRadius] || [] : [],
+        supermarkets: storeSelection.supermarket
+          ? newStores.supermarket?.[selectedRadius] || []
+          : [],
+        groceries: storeSelection.grocery
+          ? newStores.grocery?.[selectedRadius] || []
+          : [],
+        conveniences: storeSelection.convenience
+          ? newStores.convenience?.[selectedRadius] || []
+          : [],
       });
 
       setStoreCache(newStores);

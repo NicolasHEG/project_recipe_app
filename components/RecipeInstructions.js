@@ -33,10 +33,8 @@ export default function RecipeInstructions({ instructions }) {
       lowerCaseStep.includes("oven")
     ) {
       return "stove";
-    } else if (
-      lowerCaseStep.includes("serve")
-    ) {
-      return "silverware-fork-knife"
+    } else if (lowerCaseStep.includes("serve")) {
+      return "silverware-fork-knife";
     } else {
       return "chef-hat";
     }

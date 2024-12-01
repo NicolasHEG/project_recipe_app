@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Keyboard, View, StyleSheet, Text, Alert } from "react-native";
+import { Keyboard, View, StyleSheet, Alert, Text } from "react-native";
 import { Button, TouchableRipple } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useAuthentication } from "../contexts/AuthenticationContext";
@@ -24,12 +24,18 @@ export default function Login() {
   return (
     <TouchableRipple onPress={Keyboard.dismiss} style={{ flex: 1 }}>
       <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Welcome Back!</Text>
+          <Text style={styles.subtitle}>Please login to continue</Text>
+        </View>
+        
         <AuthenticationForm
           email={email}
           setEmail={setEmail}
           password={password}
           setPassword={setPassword}
         />
+        
         <Button
           mode="contained"
           onPress={handleLogin}
@@ -37,13 +43,14 @@ export default function Login() {
         >
           Login
         </Button>
+        
         <Button
           mode="text"
           onPress={() => navigation.navigate("Register")}
           style={styles.registerButton}
           labelStyle={styles.registerLabel}
         >
-          No account ? Register
+          No account? Register
         </Button>
       </View>
     </TouchableRipple>
@@ -58,7 +65,17 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
-    marginBottom: 50,
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#000",
+  },
+  subtitle: {
+    fontSize: 16,
+    color: "#555",
+    marginTop: 10,
   },
   form: {
     marginTop: -50,

@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import { TextInput } from "react-native-paper";
 
-export default function AuthenticationForm({ email, setEmail, password, setPassword }) {
+// Component for rendering an authentication form with email and password inputs
+export default function AuthenticationForm({
+  email,
+  setEmail,
+  password,
+  setPassword,
+}) {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
 
   return (
@@ -23,7 +29,9 @@ export default function AuthenticationForm({ email, setEmail, password, setPassw
         label="Password"
         mode="outlined"
         value={password}
+        // Updates password state in the parent component
         onChangeText={(text) => setPassword(text)}
+        // Toggles between masked and unmasked password
         secureTextEntry={!isPasswordShown}
         style={styles.input}
         left={<TextInput.Icon icon="lock-outline" />}

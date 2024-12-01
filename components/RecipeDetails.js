@@ -9,15 +9,7 @@ import {
 import { fetchRecipeDetails, fetchRecipeInstructions } from "../api";
 import { Card, Snackbar } from "react-native-paper";
 import { app } from "../firebaseConfig";
-import {
-  getDatabase,
-  ref,
-  push,
-  remove,
-  onValue,
-  get,
-  set,
-} from "firebase/database";
+import { getDatabase, ref, push, remove, get, set } from "firebase/database";
 import RecipeInstructions from "./RecipeInstructions";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 import FavoriteButton from "./FavoriteButton";
@@ -67,46 +59,49 @@ export default function RecipeDetails({ route, navigation }) {
   };
 
   // Handle saving or removing a recipe from the user's favorites
-  const handleSaveFavorite = () => {
-    if (!isFavorite) {
-      // Add the recipe to favorites if not already a favorite
-      const newFavoriteRef = push(
-        ref(database, "users/" + userId + "/favorites"),
-        recipeDetails
-      );
-      setIsFavorite(true);
-      setFavoriteId(newFavoriteRef.key);
-    } else {
-      // Remove the recipe from favorites if already a favorite
-      remove(ref(database, "users/" + userId + `/favorites/${favoriteId}`));
-      setIsFavorite(false);
-      setFavoriteId("");
+  const handleSaveFavorite = async () => {
+    try {
+      const favoritesPath = `users/${userId}/favorites`;
+      if (!isFavorite) {
+        // Add the recipe to favorites if not already a favorite
+        const newFavoriteRef = await push(
+          ref(database, favoritesPath),
+          recipeDetails
+        );
+        setIsFavorite(true);
+        setFavoriteId(newFavoriteRef.key);
+      } else {
+        // Remove the recipe from favorites if already a favorite
+        await remove(ref(database, `${favoritesPath}/${favoriteId}`));
+        setIsFavorite(false);
+        setFavoriteId("");
+      }
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
     }
   };
 
   // Check if the current recipe is already in the user's favorites list
-  const checkIfIsFavorite = () => {
-    const favoritesReference = ref(database, "users/" + userId + "/favorites");
-    // Use the onValue listener to check for changes in the favorites list
-    onValue(favoritesReference, (snapshot) => {
+  const checkIfIsFavorite = async () => {
+    try {
+      const favoritesPath = `users/${userId}/favorites`;
+      const snapshot = await get(ref(database, favoritesPath));
       const data = snapshot.val();
+
       if (data) {
-        const favoritesList = Object.values(data);
-        const favorite = favoritesList.find(
-          (favorite) => favorite.id === recipe.id
+        const favoriteKey = Object.keys(data).find(
+          (key) => data[key].id === recipe.id
         );
-        if (favorite) {
+        if (favoriteKey) {
           setIsFavorite(true);
-          setFavoriteId(
-            Object.keys(data).find((key) => data[key].id === recipe.id)
-          );
-        } else {
-          setIsFavorite(false);
+          setFavoriteId(favoriteKey);
+          return;
         }
-      } else {
-        setIsFavorite(false);
       }
-    });
+      setIsFavorite(false);
+    } catch (error) {
+      console.error("Error checking favorite status:", error);
+    }
   };
 
   // Toggle the visibility of the recipe instructions
@@ -115,9 +110,19 @@ export default function RecipeDetails({ route, navigation }) {
   };
 
   useEffect(() => {
-    fetchRecipeDetailsApi(recipe.id);
-    fetchRecipeInstructionsApi(recipe.id);
-    checkIfIsFavorite();
+    // Neccessary to create an async function to use await inside useEffect
+    const fetchData = async () => {
+      try {
+        await Promise.all([
+          fetchRecipeDetailsApi(recipe.id),
+          fetchRecipeInstructionsApi(recipe.id),
+          checkIfIsFavorite(),
+        ]);
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    };
+    fetchData();
   }, [recipe.id]);
 
   // Handle adding ingredients to the user's grocery list
@@ -288,7 +293,6 @@ export default function RecipeDetails({ route, navigation }) {
   );
 }
 
-// Styles for the components
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -298,7 +302,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: 16,
-    elevation: 4, // Add shadow effect to the card
+    elevation: 4,
   },
   sectionTitle: {
     fontSize: 18,

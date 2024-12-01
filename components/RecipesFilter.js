@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, TextInput, Card } from 'react-native-paper';
+import React, { useState } from "react";
+import { View, StyleSheet } from "react-native";
+import { Button, TextInput, Card } from "react-native-paper";
 
-export default function RecipesFilter({onApplyFilters}) {
+export default function RecipesFilter({ onApplyFilters }) {
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [ingredients, setIngredients] = useState('');
-  const [intolerances, setIntolerances] = useState('');
-  const [diet, setDiet] = useState('');
+  const [ingredients, setIngredients] = useState("");
+  const [intolerances, setIntolerances] = useState("");
+  const [diet, setDiet] = useState("");
 
   const toggleFilters = () => {
     setFiltersVisible(!filtersVisible);
@@ -21,20 +21,20 @@ export default function RecipesFilter({onApplyFilters}) {
 
     // filters will be passed to the recipe search component
     onApplyFilters(filters);
-  }
+  };
 
   const clearFilters = () => {
-    setIngredients('');
-    setIntolerances('');
-    setDiet('');
+    setIngredients("");
+    setIntolerances("");
+    setDiet("");
     onApplyFilters({});
-  }
+  };
 
   return (
     <View style={styles.container}>
       <Button mode="contained" onPress={toggleFilters}>
         {/* Toggle filter section button label */}
-        {filtersVisible ? 'Hide Filters' : 'Show Filters'}
+        {filtersVisible ? "Hide Filters" : "Show Filters"}
       </Button>
 
       {/* Filters section */}
@@ -44,7 +44,7 @@ export default function RecipesFilter({onApplyFilters}) {
           <TextInput
             label="Ingredients"
             value={ingredients}
-            onChangeText={text => setIngredients(text)}
+            onChangeText={(text) => setIngredients(text)}
             mode="outlined"
             style={styles.input}
             placeholder="e.g., chicken, tomato"
@@ -54,7 +54,7 @@ export default function RecipesFilter({onApplyFilters}) {
           <TextInput
             label="Intolerances"
             value={intolerances}
-            onChangeText={text => setIntolerances(text)}
+            onChangeText={(text) => setIntolerances(text)}
             mode="outlined"
             style={styles.input}
             placeholder="e.g., gluten, dairy"
@@ -64,19 +64,27 @@ export default function RecipesFilter({onApplyFilters}) {
           <TextInput
             label="Diet"
             value={diet}
-            onChangeText={text => setDiet(text)}
+            onChangeText={(text) => setDiet(text)}
             mode="outlined"
             style={styles.input}
             placeholder="e.g., vegan, lactose free"
           />
-          
-          <Button mode="contained" onPress={applyFilters}>Apply Filters</Button>
-          <Button style={{marginTop:10}} mode="outlined" onPress={clearFilters}>Clear filters</Button>
+
+          <Button mode="contained" onPress={applyFilters}>
+            Apply Filters
+          </Button>
+          <Button
+            style={{ marginTop: 10 }}
+            mode="outlined"
+            onPress={clearFilters}
+          >
+            Clear filters
+          </Button>
         </Card>
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -85,10 +93,9 @@ const styles = StyleSheet.create({
   filterSection: {
     marginTop: 10,
     padding: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   input: {
     marginBottom: 10,
   },
 });
-

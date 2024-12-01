@@ -46,7 +46,7 @@ export const AuthenticationProvider = ({ children }) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.error("Error registering:", error);
+      throw new Error("Registration failed. Check your email and password")
     }
   };
 

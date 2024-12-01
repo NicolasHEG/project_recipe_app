@@ -4,7 +4,12 @@ import MapView, { Marker, Callout } from "react-native-maps";
 import { Card, Text, Divider } from "react-native-paper";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-export function Map({ location, supermarkets, groceryStores, convenienceStores }) {
+export function Map({
+  location,
+  supermarkets,
+  groceryStores,
+  convenienceStores,
+}) {
   return (
     <MapView
       style={{ flex: 1 }}
@@ -58,7 +63,11 @@ export function Map({ location, supermarkets, groceryStores, convenienceStores }
                     </Text>
                   </View>
                   <View style={styles.detailRow}>
-                    <Icon name="city-variant-outline" size={16} color="#757575" />
+                    <Icon
+                      name="city-variant-outline"
+                      size={16}
+                      color="#757575"
+                    />
                     <Text style={styles.detailText}>
                       {store.tags["addr:postcode"] || ""}{" "}
                       {store.tags["addr:city"] || "City: Not available"}
@@ -110,7 +119,11 @@ export function Map({ location, supermarkets, groceryStores, convenienceStores }
                     </Text>
                   </View>
                   <View style={styles.detailRow}>
-                    <Icon name="city-variant-outline" size={16} color="#757575" />
+                    <Icon
+                      name="city-variant-outline"
+                      size={16}
+                      color="#757575"
+                    />
                     <Text style={styles.detailText}>
                       {store.tags["addr:postcode"] || ""}{" "}
                       {store.tags["addr:city"] || "City: Not available"}
@@ -162,7 +175,11 @@ export function Map({ location, supermarkets, groceryStores, convenienceStores }
                     </Text>
                   </View>
                   <View style={styles.detailRow}>
-                    <Icon name="city-variant-outline" size={16} color="#757575" />
+                    <Icon
+                      name="city-variant-outline"
+                      size={16}
+                      color="#757575"
+                    />
                     <Text style={styles.detailText}>
                       {store.tags["addr:postcode"] || ""}{" "}
                       {store.tags["addr:city"] || "City: Not available"}
