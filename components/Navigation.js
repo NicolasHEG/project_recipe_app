@@ -111,7 +111,9 @@ function CustomStackNavigation({ isAuthenticated }) {
 
 export default function Navigation() {
   const { user, loading } = useAuthentication();
-  if (loading) return null;
+  if (loading) {
+    return null;
+  }
 
   return <CustomStackNavigation isAuthenticated={!!user} />;
 }

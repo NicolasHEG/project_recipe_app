@@ -113,6 +113,7 @@ export default function RecipeDetails({ route, navigation }) {
     // Neccessary to create an async function to use await inside useEffect
     const fetchData = async () => {
       try {
+        // Promise.all() is used to wait for all promises to resolve before continuing
         await Promise.all([
           fetchRecipeDetailsApi(recipe.id),
           fetchRecipeInstructionsApi(recipe.id),
@@ -202,6 +203,7 @@ export default function RecipeDetails({ route, navigation }) {
         .then((snapshot) => {
           const data = snapshot.val();
           if (data) {
+            // Add object to array
             const groceriesList = Object.values(data);
             const ingredientInList = groceriesList.find(
               (item) => item.id === ingredient.id

@@ -12,6 +12,7 @@ import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 
 const AuthenticationContext = createContext();
 const auth = initializeAuth(app, {
+  // Manage user persistence
   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });
 
@@ -27,7 +28,7 @@ export const AuthenticationProvider = ({ children }) => {
 
     return unsubscribe;
   }, []);
-
+  
   const login = async (email, password) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -36,12 +37,14 @@ export const AuthenticationProvider = ({ children }) => {
     }
   };
 
+  // Sign out the current user
   const logout = () => {
     signOut(auth)
       .then(() => console.log("Signed out successfully"))
       .catch((error) => console.error("Error signing out:", error));
   };
 
+  // Register a new user with the provided email and password
   const register = async (email, password) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);

@@ -25,6 +25,7 @@ export function MapViewComponent() {
 
   const fetchLocation = async () => {
     try {
+      // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert("Permission to access location was denied.");
@@ -51,6 +52,7 @@ export function MapViewComponent() {
     }
   };
 
+  // Fetch grocery stores based on the selected store types and radius
   const fetchGroceryStores = useCallback(async () => {
     if (!location) return;
     setFetchingStores(true);
@@ -62,17 +64,22 @@ export function MapViewComponent() {
       longitudeDelta: 0.0421,
     };
 
+    // Copy the store cache to prevent modifying the original state
     const newStores = { ...storeCache };
 
     try {
       // Fetch data for selected store types
       await Promise.all(
         Object.keys(storeSelection).map(async (type) => {
+          // Fetch data only if the store type is selected and not already cached
           if (storeSelection[type]) {
+            // Check if the data is already cached
             if (!newStores[type]?.[selectedRadius]) {
               const data = await getGroceryStores(region, type, selectedRadius);
+              // Update the store cache with the new data
               newStores[type] = {
                 ...newStores[type],
+                // Store the data in the cache with the selected radius as the key
                 [selectedRadius]: data.elements,
               };
             }
@@ -80,6 +87,7 @@ export function MapViewComponent() {
         })
       );
 
+      // Update the state with the new store data
       setStores({
         supermarkets: storeSelection.supermarket
           ? newStores.supermarket?.[selectedRadius] || []
@@ -98,7 +106,7 @@ export function MapViewComponent() {
     } finally {
       setFetchingStores(false);
     }
-  }, [location, storeSelection, selectedRadius, storeCache]);
+  }, [location, storeSelection, selectedRadius, storeCache]); // Dependency array for the useCallback hook to prevent unnecessary re-renders
 
   // Debounce the fetchGroceryStores function to prevent multiple calls in a short time
   const debouncedFetchGroceryStores = useCallback(
