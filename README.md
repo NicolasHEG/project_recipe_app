@@ -1,4 +1,4 @@
-# Recipe Finder Mobile Application
+# Recipe Finder
 
 The application helps users find recipes based on ingredients they have, search for grocery stores nearby, and manage their grocery list.
 
