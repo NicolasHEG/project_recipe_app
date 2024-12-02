@@ -23,6 +23,6 @@ The application helps users find recipes based on ingredients they have, search 
 - **React Context API**: Manages global state seamlessly without additional libraries.
 
 ### Additional Libraries
-- **React Navigation**: Provides flexible navigation solutions for smooth transitions.
+- **React Navigation**: Provides flexible navigation through the app.
 - **Lodash.debounce**: Debounces API calls to improve performance and user experience.
 - **MaterialIcons**: Material Design icons
