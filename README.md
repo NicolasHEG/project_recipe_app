@@ -17,7 +17,7 @@ The application helps users find recipes based on ingredients they have, search 
 - **Expo Location**: Accesses device location services for features like the grocery store locator.
 
 ### Database
-- **Firebase**: Manages user data efficiently with tools for authentication and a real-time database.
+- **Firebase**: NoSQL with tools for authentication and a real-time database.
 
 ### State Management
 - **React Context API**: Manages global state seamlessly without additional libraries.
@@ -25,3 +25,4 @@ The application helps users find recipes based on ingredients they have, search 
 ### Additional Libraries
 - **React Navigation**: Provides flexible navigation solutions for smooth transitions.
 - **Lodash.debounce**: Debounces API calls to improve performance and user experience.
+- **MaterialIcons**: Material Design icons
