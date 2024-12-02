@@ -6,8 +6,8 @@ The application helps users find recipes based on ingredients they have, search 
 
 ### Frontend
 - **React Native**: Enables building native apps with a single codebase for both iOS and Android.
-- **Expo**: Simplifies development and deployment with a robust set of tools and services.
-- **React Native Paper**: Provides high-quality Material Design components for a consistent UI.
+- **Expo**: Set of tools and services for robust development.
+- **React Native Paper**: Material Design components for a consistent UI.
 
 ### APIs
 - **Spoonacular API**: Offers a rich database of recipes, detailed information, and nutritional data.
